@@ -1,3 +1,5 @@
-export default function Home() {
-  return <div>25-10-15-next-things-app-self</div>;
+import ThingList from "./components/ThingList";
+
+export default function HomePage() {
+  return <ThingList />;
 }
