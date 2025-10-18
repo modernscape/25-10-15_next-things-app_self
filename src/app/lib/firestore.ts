@@ -1,6 +1,6 @@
-import firebase from "firebase/compat/app";
 import { db } from "./firebase";
-import { collection, getDoc, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { Thing } from "@/types";
 
 const key_things = "things";
 /// Thing
