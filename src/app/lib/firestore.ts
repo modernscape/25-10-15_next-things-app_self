@@ -25,7 +25,7 @@ export async function subscribe(callback: (things: Thing[]) => void) {
   const q = query(collection(db, key_things), orderBy("order", "asc"));
   return onSnapshot(q, (snapshot) => {
     const things_ = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Thing));
-    callback(things);
+    callback(things_);
   });
 }
 // Update
