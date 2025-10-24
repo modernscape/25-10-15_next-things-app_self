@@ -1,5 +1,17 @@
 import { db } from "./firebase";
-import { collection, doc, addDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, arrayUnion } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  arrayUnion,
+  arrayRemove,
+  getDoc,
+} from "firebase/firestore";
 import { Thing } from "@/types";
 
 const key_things = "things";
@@ -53,5 +65,26 @@ export async function addItem(thingID: string) {
 }
 
 // Read
+
 // Update
+export async function updateItem(thingID: string, itemID: string, newValue: string) {
+  const thingRef = doc(db, key_things, thingID); // thing
+  const snapshot = await getDoc(thingRef); // thing
+  if (!snapshot.exists()) return;
+
+  const thing = snapshot.data() as Thing; // thing
+  const oldItem = thing.items.find((item) => item.id === itemID);
+  if (!oldItem) return; // item
+
+  if (newValue !== "") {
+    await updateDoc(thingRef, {
+      items: arrayRemove(oldItem),
+    });
+  }
+  const newItem = { ...oldItem, text: newValue };
+  await updateDoc(thingRef, {
+    items: arrayUnion(newItem),
+  });
+}
+
 // Delete
