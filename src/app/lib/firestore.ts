@@ -64,9 +64,7 @@ export async function addItem(thingID: string) {
   });
 }
 
-// Read
-
-// Update
+// Update、Delete
 export async function updateItem(thingID: string, itemID: string, newText: string) {
   const thingRef = doc(db, key_things, thingID); // thing
   const snapshot = await getDoc(thingRef); // thing
@@ -87,4 +85,4 @@ export async function updateItem(thingID: string, itemID: string, newText: strin
   }
 }
 
-// Delete
+// moveUp, moveUDown
