@@ -67,24 +67,24 @@ export async function addItem(thingID: string) {
 // Read
 
 // Update
-export async function updateItem(thingID: string, itemID: string, newValue: string) {
+export async function updateItem(thingID: string, itemID: string, newText: string) {
   const thingRef = doc(db, key_things, thingID); // thing
   const snapshot = await getDoc(thingRef); // thing
   if (!snapshot.exists()) return;
 
   const thing = snapshot.data() as Thing; // thing
-  const oldItem = thing.items.find((item) => item.id === itemID);
-  if (!oldItem) return; // item
+  const oldItem = thing.items.find((item) => item.id === itemID); // item
+  if (!oldItem) return;
 
-  if (newValue !== "") {
+  updateDoc(thingRef, {
+    items: arrayRemove(oldItem),
+  });
+
+  if (newText !== "") {
     await updateDoc(thingRef, {
-      items: arrayRemove(oldItem),
+      items: arrayUnion({ ...oldItem, text: newText }),
     });
   }
-  const newItem = { ...oldItem, text: newValue };
-  await updateDoc(thingRef, {
-    items: arrayUnion(newItem),
-  });
 }
 
 // Delete
