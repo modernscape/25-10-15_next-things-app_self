@@ -67,20 +67,20 @@ export async function addItem(thingID: string) {
 // Update、Delete
 export async function updateItem(thingID: string, itemID: string, newText: string) {
   const thingRef = doc(db, key_things, thingID); // thing
-  const snapshot = await getDoc(thingRef); // thing
+  const snapshot = await getDoc(thingRef);
   if (!snapshot.exists()) return;
 
-  const thing = snapshot.data() as Thing; // thing
-  const oldItem = thing.items.find((item) => item.id === itemID); // item
+  const thing = snapshot.data() as Thing;
+  const oldItem = thing.items.find((item) => item.id === itemID);
   if (!oldItem) return;
 
-  updateDoc(thingRef, {
+  await updateDoc(thingRef, {
     items: arrayRemove(oldItem),
   });
 
   if (newText !== "") {
     await updateDoc(thingRef, {
-      items: arrayUnion({ ...oldItem, text: newText }),
+      items: arrayUnion({ items: { ...oldItem, newText } }),
     });
   }
 }
