@@ -80,7 +80,7 @@ export async function updateItem(thingID: string, itemID: string, newText: strin
 
   if (newText !== "") {
     await updateDoc(thingRef, {
-      items: arrayUnion({ items: { ...oldItem, newText } }),
+      items: arrayUnion({ items: { ...oldItem, text: newText } }),
     });
   }
 }
