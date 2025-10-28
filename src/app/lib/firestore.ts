@@ -11,6 +11,7 @@ import {
   arrayUnion,
   arrayRemove,
   getDoc,
+  getDocs,
 } from "firebase/firestore";
 import { Thing } from "@/types";
 
@@ -80,9 +81,46 @@ export async function updateItem(thingID: string, itemID: string, newText: strin
 
   if (newText !== "") {
     await updateDoc(thingRef, {
-      items: arrayUnion({ items: { ...oldItem, text: newText } }),
+      items: arrayUnion({ ...oldItem, text: newText }),
     });
   }
 }
 
 // moveUp, moveUDown
+export async function moveThing(thingID: string, up: boolean) {
+  const q = query(collection(db, key_things), orderBy("order", "asc"));
+  const snapshot = await getDocs(q); // QuerySnapshot
+  const things = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Thing[];
+
+  const index = things.findIndex((t) => t.id === thingID);
+  const currentThingRef = doc(db, key_things, thingID);
+
+  if (up) {
+    if (index <= 0) return;
+    const prevThing = things[index - 1];
+    const prevThingRef = doc(db, key_things, prevThing.id);
+
+    await Promise.all([
+      updateDoc(currentThingRef, { order: index - 1 }), //
+      updateDoc(prevThingRef, { order: index }),
+    ]);
+  } else {
+    if (index >= things.length - 1) return;
+    const nextThing = things[index + 1];
+    const nextThingRef = doc(db, key_things, nextThing.id);
+
+    await Promise.all([
+      updateDoc(currentThingRef, { order: index + 1 }), //
+      updateDoc(nextThingRef, { order: index }),
+    ]);
+  }
+}
+
+// QuerySnapshot
+//   ├── docs[0] → DocumentSnapshot
+//   ├── docs[1] → DocumentSnapshot
+//   ├── docs[2] → DocumentSnapshot
+//   └── ...
