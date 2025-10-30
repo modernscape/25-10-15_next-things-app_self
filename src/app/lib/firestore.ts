@@ -87,40 +87,33 @@ export async function updateItem(thingID: string, itemID: string, newText: strin
 }
 
 // moveUp, moveUDown
+import { runTransaction } from "firebase/firestore";
+
 export async function moveThing(thingID: string, up: boolean) {
   const q = query(collection(db, key_things), orderBy("order", "asc"));
-  const snapshot = await getDocs(q); // QuerySnapshot
-  const things = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
+  const snapshot = await getDocs(q);
+  const things = snapshot.docs.map((t) => ({
+    id: t.id,
+    ...t.data(),
   })) as Thing[];
 
   const index = things.findIndex((t) => t.id === thingID);
-  const currentThingRef = doc(db, key_things, thingID);
+  if (index === -1) return;
 
-  if (up) {
-    if (index <= 0) return;
-    const prevThing = things[index - 1];
-    const prevThingRef = doc(db, key_things, prevThing.id);
+  const swapIndex = up ? index - 1 : index + 1;
+  if (swapIndex < 0 || swapIndex >= things.length) return;
 
-    await Promise.all([
-      updateDoc(currentThingRef, { order: index - 1 }), //
-      updateDoc(prevThingRef, { order: index }),
-    ]);
-  } else {
-    if (index >= things.length - 1) return;
-    const nextThing = things[index + 1];
-    const nextThingRef = doc(db, key_things, nextThing.id);
+  const currentRef = doc(db, key_things, things[index].id);
+  const swapRef = doc(db, key_things, things[swapIndex].id);
 
-    await Promise.all([
-      updateDoc(currentThingRef, { order: index + 1 }), //
-      updateDoc(nextThingRef, { order: index }),
-    ]);
-  }
+  runTransaction(db, async (tx) => {
+    tx.update(currentRef, { order: swapIndex });
+    tx.update(swapRef, { order: index });
+  });
 }
 
 // QuerySnapshot
-//   ├── docs[0] → DocumentSnapshot
-//   ├── docs[1] → DocumentSnapshot
-//   ├── docs[2] → DocumentSnapshot
+//   ├── snapshot.docs[0] → DocumentSnapshot
+//   ├── snapshot.docs[1] → DocumentSnapshot
+//   ├── snapshot.docs[2] → DocumentSnapshot
 //   └── ...
