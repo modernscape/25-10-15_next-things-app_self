@@ -4,6 +4,7 @@ export interface Thing {
   title: string;
   items: { id: string; text: string }[];
   createdAt: Date;
+  trashed: boolean;
 }
 
 export interface ThingsState {
