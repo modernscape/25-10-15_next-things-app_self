@@ -23,8 +23,7 @@ Thing
 // Create
 export async function addThing(title: string, order: number) {
   const ref = collection(db, key_things);
-  return addDoc(ref, {
-    id: Date.now().toString(),
+  return await addDoc(ref, {
     title,
     order,
     items: [],
@@ -61,7 +60,7 @@ Item
 export async function addItem(thingID: string) {
   const thingRef = doc(db, key_things, thingID);
   await updateDoc(thingRef, {
-    items: arrayUnion({ id: Date.now().toString(), text: "新しいitem" }),
+    items: arrayUnion({ id: Date.now().toString(), text: "new item" }),
   });
 }
 

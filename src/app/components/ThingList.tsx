@@ -22,31 +22,29 @@ export default function ThingList() {
       {/* （1）Thing追加フォーム */}
       {view === "active" && (
         <div className="mb-4">
-          <input type="text" placeholder="新しいThing" />
+          <input type="text" placeholder="new Thing" />
           <button onClick={() => addThing("Thing", things.length)}>+</button>
         </div>
       )}
       {/* （2）Things */}
       {filtered.map((t, i) => (
-        <div key={i} className="border">
+        <div key={i} className="border p-2">
           {/* タイトル編集 */}
-          <input type="text" placeholder="Thingのタイトル入力" defaultValue={t.title} />
+          <input type="text" placeholder="input Thing title" defaultValue={t.title} className="underline mb-2 text-[34px]" />
           {/* items */}
-          <ul className="flex">
+          <ul className="flex flex-wrap text-[22px] text-gray-500 mb-4 gap-x-4">
             {t.items.map((item) => (
-              <li key={item.id}>{item.text}</li>
+              <li key={item.id} className="">
+                <input type="text" defaultValue={item.text} style={{ width: "200px" }} />
+              </li>
             ))}
-            <button onClick={
-              () => {
-                console.log(t.id);
-                addItem(t.id);
-              }}>
+            <button onClick={() => { addItem(t.id); }}>
               +
             </button>
           </ul>
           {/* ゴミ箱ボタン、↑ボタン、↓ボタン */}
-          <div className="flex">
-            <button>ゴミ</button>
+          <div className="flex text-[20px] gap-2">
+            <button className="round border p-1">ゴミ</button>
             <button>↑</button>
             <button>↓</button>
           </div>
