@@ -36,7 +36,11 @@ export default function ThingList() {
             {t.items.map((item) => (
               <li key={item.id}>{item.text}</li>
             ))}
-            <button onClick={() => { addItem(t.id); }}>
+            <button onClick={
+              () => {
+                console.log(t.id);
+                addItem(t.id);
+              }}>
               +
             </button>
           </ul>

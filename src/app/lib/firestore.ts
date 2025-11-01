@@ -61,7 +61,7 @@ Item
 export async function addItem(thingID: string) {
   const thingRef = doc(db, key_things, thingID);
   await updateDoc(thingRef, {
-    items: arrayUnion({ id: Date.now().toString(), title: "新しいitem" }),
+    items: arrayUnion({ id: Date.now().toString(), text: "新しいitem" }),
   });
 }
 
