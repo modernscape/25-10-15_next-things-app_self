@@ -53,6 +53,18 @@ export async function deleteThing(thingID: string) {
   await deleteDoc(thingRef);
 }
 
+//
+export async function toggleTrash(thingID: string) {
+  const thingRef = doc(db, key_things, thingID)
+  const snapshot = await getDoc(thingRef)
+  if (!snapshot.exists()) return
+
+  const thing = snapshot.data() as Thing
+  await updateDoc(thingRef, {
+    trashed: !thing.trashed
+  })
+}
+
 /*
 Item
 */

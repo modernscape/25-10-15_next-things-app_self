@@ -2,7 +2,7 @@
 import { useThingStore } from "../store/thingsStore";
 import { useEffect, useState } from "react";
 import { subscribeThings } from "../lib/firestore";
-import { addThing, addItem } from "../lib/firestore";
+import { addThing, addItem, toggleTrash } from "../lib/firestore";
 
 export default function ThingList() {
   const things = useThingStore((state) => state.things);
@@ -11,6 +11,8 @@ export default function ThingList() {
 
   useEffect(() => {
     const unsubscribe = subscribeThings(setThings);
+    console.log(unsubscribe);
+
     return unsubscribe;
   }, [setThings]);
 
@@ -28,7 +30,7 @@ export default function ThingList() {
       )}
       {/* （2）Things */}
       {filtered.map((t, i) => (
-        <div key={i} className="border p-2">
+        <div key={i} className="border-t p-2">
           {/* タイトル編集 */}
           <input type="text" placeholder="input Thing title" defaultValue={t.title} className="underline mb-2 text-[34px]" />
           {/* items */}
@@ -44,7 +46,8 @@ export default function ThingList() {
           </ul>
           {/* ゴミ箱ボタン、↑ボタン、↓ボタン */}
           <div className="flex text-[20px] gap-2">
-            <button className="round border p-1">ゴミ</button>
+            <button className="round border p-1" onClick={() => toggleTrash(t.id)}>{t.trashed ? "復元" : "ゴミ箱"}
+            </button>
             <button>↑</button>
             <button>↓</button>
           </div>
