@@ -2,7 +2,7 @@
 import { useThingStore } from "../store/thingsStore";
 import { useEffect, useState } from "react";
 import { subscribeThings } from "../lib/firestore";
-import { addThing, addItem, toggleTrash } from "../lib/firestore";
+import { addThing, addItem, toggleTrash, updateThing, updateItemAtIndexWithTx } from "../lib/firestore";
 
 export default function ThingList() {
   const things = useThingStore((state) => state.things);
@@ -29,15 +29,28 @@ export default function ThingList() {
         </div>
       )}
       {/* （2）Things */}
-      {filtered.map((t, i) => (
-        <div key={i} className="border-t p-2">
+      {filtered.map((t) => (
+        <div key={t.id} className="border-t p-2">
           {/* タイトル編集 */}
-          <input type="text" placeholder="input Thing title" defaultValue={t.title} className="underline mb-2 text-[34px]" />
+          <input type="text" placeholder="thing title" defaultValue={t.title} className={t.title !== "" ? "underline" : "" + "mb-2 text-[34px]"} onKeyDown={(e) => {
+            if (e.key !== "Enter") return
+            const inputEl = e.target as HTMLInputElement
+            updateThing(t.id, { title: inputEl.value })
+            inputEl.blur()
+          }} />
           {/* items */}
-          <ul className="flex flex-wrap text-[22px] text-gray-500 mb-4 gap-x-4">
-            {t.items.map((item) => (
-              <li key={item.id} className="">
-                <input type="text" defaultValue={item.text} style={{ width: "200px" }} />
+          <ul className="flex flex-wrap text-[22px]  mb-4 gap-x-4 text-[#277a4f]">
+            {t.items.map((item, i) => (
+              <li key={item.id} >
+                <input type="text" defaultValue={item.text} style={{ width: "200px" }} placeholder="item" onKeyDown={(e) => {
+                  console.log(i);
+
+                  if (e.key !== "Enter") return
+                  const inputEl = e.target as HTMLInputElement
+                  updateItemAtIndexWithTx(t.id, i, inputEl.value)
+                  inputEl.blur()
+
+                }} />
               </li>
             ))}
             <button onClick={() => { addItem(t.id); }}>

@@ -71,31 +71,81 @@ Item
 // Create
 export async function addItem(thingID: string) {
   const thingRef = doc(db, key_things, thingID);
+
+
+  const uniqueID = doc(collection(db, "dummy")).id
+
   await updateDoc(thingRef, {
-    items: arrayUnion({ id: Date.now().toString(), text: "new item" }),
+    items: arrayUnion({ id: uniqueID, text: "new item" }),
   });
 }
 
 // Update、Delete
-export async function updateItem(thingID: string, itemID: string, newText: string) {
-  const thingRef = doc(db, key_things, thingID); // thing
-  const snapshot = await getDoc(thingRef);
-  if (!snapshot.exists()) return;
+// export async function updateItem(thingID: string, itemID: string, newText: string) {
+//   const thingRef = doc(db, key_things, thingID); // thing
+//   const snapshot = await getDoc(thingRef);
+//   if (!snapshot.exists()) return;
 
-  const thing = snapshot.data() as Thing;
-  const oldItem = thing.items.find((item) => item.id === itemID);
-  if (!oldItem) return;
+//   const thing = snapshot.data() as Thing;
+//   const oldItem = thing.items.find((item) => item.id === itemID);
+//   if (!oldItem) return;
 
-  await updateDoc(thingRef, {
-    items: arrayRemove(oldItem),
-  });
+//   await updateDoc(thingRef, {
+//     items: arrayRemove(oldItem),
+//   });
 
-  if (newText !== "") {
-    await updateDoc(thingRef, {
-      items: arrayUnion({ ...oldItem, text: newText }),
-    });
-  }
+//   if (newText !== "") {
+//     await updateDoc(thingRef, {
+//       items: arrayUnion({ ...oldItem, text: newText }),
+//     });
+//   }
+// }
+
+
+// export async function updateItemAtIndex(thingID: string, index: number, newItem: string) {
+//   const thingRef = doc(db, key_things, thingID)
+//   const snapshot = await getDoc(thingRef)
+
+//   if (!snapshot.exists()) return
+
+//   const data = snapshot.data() // Thing
+//   const items = data.items || []
+
+//   // 範囲外保護
+//   if (index < 0 || index >= items.length) return
+
+//   items[index] = {
+//     ...items[index],
+//     text: newItem
+//   }
+
+//   await updateDoc(thingRef, {
+//     items,
+//   })
+// }
+
+// ↓
+
+// Firestore 的に安全な書き方（同時編集対策）
+export async function updateItemAtIndexWithTx(thingID: string, index: number, newItem: string) {
+  const thingRef = doc(db, key_things, thingID)
+
+  await runTransaction(db, async (transaction) => {
+    const snap = await transaction.get(thingRef)
+    if (!snap.exists()) return
+
+    const data = snap.data()
+    const items = data.items || []
+
+    if (index < 0 || index >= items.length) return
+
+    items[index] = { ...items[index], text: newItem }
+    transaction.update(thingRef, { items })
+  })
 }
+
+
+
 
 // moveUp, moveUDown
 import { runTransaction } from "firebase/firestore";
