@@ -124,22 +124,22 @@ export async function addItem(thingID: string) {
 //   })
 // }
 
-// ↓
+//
 
 // Firestore 的に安全な書き方（同時編集対策）
-export async function updateItemAtIndexWithTx(thingID: string, index: number, newItem: string) {
+export async function updateItemAtIndex(thingID: string, index: number, newText: string) {
   const thingRef = doc(db, key_things, thingID)
 
   await runTransaction(db, async (transaction) => {
     const snap = await transaction.get(thingRef)
     if (!snap.exists()) return
 
-    const data = snap.data()
-    const items = data.items || []
+    const thing = snap.data() as Thing
+    const items = thing.items || []
 
     if (index < 0 || index >= items.length) return
 
-    items[index] = { ...items[index], text: newItem }
+    items[index] = { ...items[index], text: newText }
     transaction.update(thingRef, { items })
   })
 }
