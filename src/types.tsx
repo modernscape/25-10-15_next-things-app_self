@@ -2,7 +2,6 @@ export interface Thing {
   id: string;
   order: number;
   title: string;
-  // items: { id: string; text: string }[];
   items: Item[];
   createdAt: Date;
   trashed: boolean;
