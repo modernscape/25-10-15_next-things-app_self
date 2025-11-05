@@ -1,8 +1,9 @@
 "use client";
 import { useThingStore } from "../store/thingsStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { subscribeThings } from "../lib/firestore";
 import { addThing, addItem, toggleTrash, updateThing, updateItemAtIndex, moveThing, deleteItem } from "../lib/firestore";
+import { ItemList } from "./ItemList";
 
 export default function ThingList() {
   const things = useThingStore((state) => state.things);
@@ -28,16 +29,17 @@ export default function ThingList() {
       )}
       {/* （2）Things */}
       {filtered.map((t, index) => (
-        <div key={t.id} className="border-t p-2">
+        <div key={t.id} className="border-t p-2 pb-6">
           {/* タイトル編集 */}
-          <input type="text" placeholder="thing title" defaultValue={t.title} className={t.title !== "" ? "underline" : "" + "mb-2 text-[34px]"} onKeyDown={(e) => {
+          <input type="text" placeholder="thing title" defaultValue={t.title} className={t.title !== "" ? "underline" : "" + "text-[34px] "} onKeyDown={(e) => {
             if (e.key !== "Enter") return
             const inputEl = e.target as HTMLInputElement
             updateThing(t.id, { title: inputEl.value })
             inputEl.blur()
           }} />
           {/* items */}
-          <ul className="flex flex-wrap text-[22px]  mb-4 gap-x-4 text-[#277a4f]">
+          <ItemList thing={t} />
+          {/* <ul className="flex flex-wrap text-[22px]  mb-4 gap-x-4 text-[#277a4f]">
             {t.items.map((item, i) => (
               <li key={item.id} >
                 <input type="text" defaultValue={item.text} style={{ width: "200px" }} placeholder="item" onKeyDown={(e) => {
@@ -55,14 +57,11 @@ export default function ThingList() {
             ))}
             <button onClick={() => {
               addItem(t.id);
-
-
-
-
             }}>
               +
             </button>
-          </ul>
+          </ul> */}
+
           {/* ゴミ箱ボタン、↑ボタン、↓ボタン */}
           <div className="flex text-[20px] gap-2">
             <button className="round border p-1" onClick={() => toggleTrash(t.id)}>{t.trashed ? "復元" : "ゴミ箱"}
