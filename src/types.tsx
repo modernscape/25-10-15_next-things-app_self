@@ -2,7 +2,8 @@ export interface Thing {
   id: string;
   order: number;
   title: string;
-  items: { id: string; text: string }[];
+  // items: { id: string; text: string }[];
+  items: Item[];
   createdAt: Date;
   trashed: boolean;
 }
@@ -12,4 +13,9 @@ export interface ThingsState {
   setThings: (things: Thing[]) => void;
   view: "active" | "trashed";
   setView: (view: "active" | "trashed") => void;
+}
+
+export interface Item {
+  id: string;
+  text: string
 }

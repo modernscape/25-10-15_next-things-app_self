@@ -2,7 +2,7 @@
 import { useThingStore } from "../store/thingsStore";
 import { useEffect, useState } from "react";
 import { subscribeThings } from "../lib/firestore";
-import { addThing, addItem, toggleTrash, updateThing, updateItemAtIndex, moveThing } from "../lib/firestore";
+import { addThing, addItem, toggleTrash, updateThing, updateItemAtIndex, moveThing, deleteItem } from "../lib/firestore";
 
 export default function ThingList() {
   const things = useThingStore((state) => state.things);
@@ -11,8 +11,6 @@ export default function ThingList() {
 
   useEffect(() => {
     const unsubscribe = subscribeThings(setThings);
-    console.log(unsubscribe);
-
     return unsubscribe;
   }, [setThings]);
 
@@ -43,17 +41,25 @@ export default function ThingList() {
             {t.items.map((item, i) => (
               <li key={item.id} >
                 <input type="text" defaultValue={item.text} style={{ width: "200px" }} placeholder="item" onKeyDown={(e) => {
-                  console.log(i);
-
                   if (e.key !== "Enter") return
                   const inputEl = e.target as HTMLInputElement
-                  updateItemAtIndex(t.id, i, inputEl.value)
-                  inputEl.blur()
-
+                  const text = inputEl.value
+                  if (text === "") {
+                    deleteItem(t.id, item.id)
+                  } else {
+                    updateItemAtIndex(t.id, i, inputEl.value)
+                    inputEl.blur()
+                  }
                 }} />
               </li>
             ))}
-            <button onClick={() => { addItem(t.id); }}>
+            <button onClick={() => {
+              addItem(t.id);
+
+
+
+
+            }}>
               +
             </button>
           </ul>

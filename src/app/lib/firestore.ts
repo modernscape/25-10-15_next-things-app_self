@@ -11,6 +11,7 @@ import {
   arrayUnion,
   getDoc,
   getDocs,
+  arrayRemove,
 } from "firebase/firestore";
 import { Thing } from "@/types";
 
@@ -70,8 +71,6 @@ Item
 // Create
 export async function addItem(thingID: string) {
   const thingRef = doc(db, key_things, thingID);
-
-
   const uniqueID = doc(collection(db, "dummy")).id
 
   await updateDoc(thingRef, {
@@ -143,6 +142,18 @@ export async function updateItemAtIndex(thingID: string, index: number, newText:
   })
 }
 
+export async function deleteItem(thingID: string, itemID: string) {
+  const thingRef = doc(db, key_things, thingID)
+  const snap = await getDoc(thingRef)
+  if (!snap.exists()) return
+
+  const thing = snap.data() as Thing
+  const item = thing.items.find((i) => i.id === itemID) // item
+
+  await updateDoc(thingRef, {
+    items: arrayRemove(item)
+  })
+}
 
 
 
