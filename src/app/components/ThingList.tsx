@@ -2,7 +2,7 @@
 import { useThingStore } from "../store/thingsStore";
 import { useEffect } from "react";
 import { subscribeThings } from "../lib/firestore";
-import { addThing, addItem, toggleTrash, updateThing, updateItemAtIndex, moveThing, deleteItem } from "../lib/firestore";
+import { addThing, toggleTrash, updateThing, moveThing } from "../lib/firestore";
 import { ItemList } from "./ItemList";
 
 export default function ThingList() {
@@ -31,12 +31,17 @@ export default function ThingList() {
       {filtered.map((t, index) => (
         <div key={t.id} className="border-t p-2 pb-6">
           {/* タイトル編集 */}
-          <input type="text" placeholder="thing title" defaultValue={t.title} className={t.title !== "" ? "underline" : "" + "text-[34px] "} onKeyDown={(e) => {
-            if (e.key !== "Enter") return
-            const inputEl = e.target as HTMLInputElement
-            updateThing(t.id, { title: inputEl.value })
-            inputEl.blur()
-          }} />
+          <input type="text"
+            placeholder="thing title"
+            defaultValue={t.title}
+            className={t.title !== "" ? "underline" : "" + "text-[34px] "}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return
+              const inputEl = e.target as HTMLInputElement
+              updateThing(t.id, { title: inputEl.value })
+              inputEl.blur()
+            }}
+          />
           {/* items */}
           <ItemList thing={t} />
           {/* <ul className="flex flex-wrap text-[22px]  mb-4 gap-x-4 text-[#277a4f]">

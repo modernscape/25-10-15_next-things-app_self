@@ -74,7 +74,7 @@ export async function addItem(thingID: string) {
   const uniqueID = doc(collection(db, "dummy")).id
 
   await updateDoc(thingRef, {
-    items: arrayUnion({ id: uniqueID, text: "new item" }),
+    items: arrayUnion({ id: uniqueID, text: "" }),
   });
 }
 

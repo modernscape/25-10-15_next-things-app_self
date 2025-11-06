@@ -36,6 +36,16 @@ export function ItemList({ thing }: { thing: Thing }) {
                                     inputEl.blur()
                                 }
                             }}
+                            onBlur={(e) => {
+                                const inputEl = e.target as HTMLInputElement
+                                const text = inputEl.value
+                                if (text === "") {
+                                    deleteItem(thing.id, item.id)
+                                } else {
+                                    updateItemAtIndex(thing.id, i, inputEl.value)
+                                    inputEl.blur()
+                                }
+                            }}
                             ref={(el) => {
                                 if (el) inputRefs.current[i] = el
                             }} />
