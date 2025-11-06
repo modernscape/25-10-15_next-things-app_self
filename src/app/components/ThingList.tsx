@@ -15,7 +15,6 @@ export default function ThingList() {
     return unsubscribe;
   }, [setThings]);
 
-  // const [newTitle, setNewTitle] = useState(""); // Thingの追加用
   const filtered = things.filter((t) => (view === "active" ? !t.trashed : t.trashed));
 
   return (
@@ -44,28 +43,6 @@ export default function ThingList() {
           />
           {/* items */}
           <ItemList thing={t} />
-          {/* <ul className="flex flex-wrap text-[22px]  mb-4 gap-x-4 text-[#277a4f]">
-            {t.items.map((item, i) => (
-              <li key={item.id} >
-                <input type="text" defaultValue={item.text} style={{ width: "200px" }} placeholder="item" onKeyDown={(e) => {
-                  if (e.key !== "Enter") return
-                  const inputEl = e.target as HTMLInputElement
-                  const text = inputEl.value
-                  if (text === "") {
-                    deleteItem(t.id, item.id)
-                  } else {
-                    updateItemAtIndex(t.id, i, inputEl.value)
-                    inputEl.blur()
-                  }
-                }} />
-              </li>
-            ))}
-            <button onClick={() => {
-              addItem(t.id);
-            }}>
-              +
-            </button>
-          </ul> */}
 
           {/* ゴミ箱ボタン、↑ボタン、↓ボタン */}
           <div className="flex text-[20px] gap-2">
