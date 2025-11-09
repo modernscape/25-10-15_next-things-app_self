@@ -4,10 +4,12 @@ export default function AutoWidthInput({
     value: initial,
     onConfirm,
     font,
+    forThing,
 }: {
     value: string,
     onConfirm: (val: string) => void,
-    font?: string
+        font?: string,
+        forThing: boolean
 }) {
     const [val, setVal] = useState(initial) // inputの文字
     const spanRef = useRef<HTMLSpanElement>(null) // ダミーのspan
@@ -15,7 +17,7 @@ export default function AutoWidthInput({
 
     useLayoutEffect(() => {
         if (spanRef.current) {
-            setW(spanRef.current.offsetWidth + 4)
+            setW(Math.max(spanRef.current.offsetWidth, 40) + 4)
         }
     }, [val])
 
@@ -42,6 +44,12 @@ export default function AutoWidthInput({
                         e.currentTarget.blur();
                     }
                 }}
+                onBlur={(e) => {
+                    onConfirm(val)
+                    e.currentTarget.blur();
+                }}
+                placeholder="title"
+                className={forThing && (val !== "") ? "underline" : "" + "text-[34px]"}
             />
         </div>
     )
