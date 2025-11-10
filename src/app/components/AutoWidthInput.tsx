@@ -1,23 +1,20 @@
 import { useState, useRef, useLayoutEffect } from "react"
+import { forwardRef } from "react"
 
-export default function AutoWidthInput({
+export const AutoWidthInput = forwardRef<HTMLInputElement, { value: string, onConfirm: (val: string) => void, font?: string, forThing: boolean }>(({
     value: initial,
     onConfirm,
     font,
-    forThing,
-}: {
-    value: string,
-    onConfirm: (val: string) => void,
-        font?: string,
-        forThing: boolean
-}) {
+    forThing
+}, ref) => {
     const [val, setVal] = useState(initial) // inputの文字
     const spanRef = useRef<HTMLSpanElement>(null) // ダミーのspan
-    const [w, setW] = useState(1) // 幅
+    const [w, setW] = useState(0) // 幅
 
     useLayoutEffect(() => {
         if (spanRef.current) {
-            setW(Math.max(spanRef.current.offsetWidth, 40) + 4)
+            const w_ = spanRef.current.offsetWidth;
+            setW(w_ > 5 ? w_ : 50)
         }
     }, [val])
 
@@ -29,10 +26,11 @@ export default function AutoWidthInput({
                     position: "absolute",
                     visibility: "hidden",
                     whiteSpace: "pre",
-                    font: font || "inheret"
+                    font: font || "inherit"
                 }}
-            >{val || " "}</span>
+            >{val || ""}</span>
             <input
+                ref={ref}
                 type="text"
                 value={val}
                 style={{ width: w, font: font || "inherit" }}
@@ -44,13 +42,26 @@ export default function AutoWidthInput({
                         e.currentTarget.blur();
                     }
                 }}
-                onBlur={(e) => {
+                onBlur={() => {
                     onConfirm(val)
-                    e.currentTarget.blur();
                 }}
                 placeholder="title"
-                className={forThing && (val !== "") ? "underline" : "" + "text-[34px]"}
+                // className={forThing && (val !== "") ? "underline" : "" + "text-[34px]"}
+                className={`${forThing && val !== "" ? "underline" : ""} text-[34px] text-center`}
             />
         </div>
     )
-}
+});
+
+AutoWidthInput.displayName = "AutoWidthInput"
+
+export default AutoWidthInput;
+
+// export const MyComponent = forwardRef<DOM要素の型, Propsの型>(
+//     (props, ref) => {
+//         return (
+//             <タグ ref={ref} {...props} />
+//         );
+//     }
+// );
+

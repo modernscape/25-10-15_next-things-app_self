@@ -1,7 +1,7 @@
 import { Thing, Item } from "@/types"
 import { deleteItem, updateItemAtIndex, addItem } from "../lib/firestore";
 import { useEffect, useRef } from "react";
-import AutoWidthInput from "./AutoWidthInput";
+import { AutoWidthInput } from "./AutoWidthInput";
 
 export function ItemList({ thing }: { thing: Thing }) {
     const items = thing.items as Item[];
@@ -15,13 +15,13 @@ export function ItemList({ thing }: { thing: Thing }) {
         }
         prevCount.current = items.length
     }, [items.length])
-
     return (
         <div>
             <ul className="flex flex-wrap text-[22px] my-4 gap-x-4 text-[#277a4f]">
                 {items.map((item, i) =>
                     <li key={item.id} >
                         <AutoWidthInput
+                            ref={(el) => { inputRefs.current[i] = el! }}
                             value={item.text}
                             onConfirm={(val) => {
                                 if (val === "") {
