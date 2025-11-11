@@ -7,9 +7,9 @@ export const AutoWidthInput = forwardRef<HTMLInputElement, { value: string, onCo
     font,
     forThing
 }, ref) => {
-    const [val, setVal] = useState(initial) // inputの文字
-    const spanRef = useRef<HTMLSpanElement>(null) // ダミーのspan
-    const [w, setW] = useState(0) // 幅
+    const [val, setVal] = useState(initial)
+    const spanRef = useRef<HTMLSpanElement>(null)
+    const [w, setW] = useState(0)
 
     useLayoutEffect(() => {
         if (spanRef.current) {
